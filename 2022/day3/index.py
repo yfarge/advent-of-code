@@ -13,16 +13,11 @@ def findOverlap(*args):
                      for arg in args]
 
     while all([len(s) > 0 for s in sortedStrings]):
-        lowestPrio = float('inf')
-        pendingRemoval = 0
         if (all([s[0] == sortedStrings[0][0] for s in sortedStrings])):
             return sortedStrings[0][0]
-        for i in range(len(sortedStrings)):
-            prio = itemPriorities[sortedStrings[i][0]]
-            if (prio < lowestPrio):
-                lowestPrio = prio
-                pendingRemoval = i
-        sortedStrings[pendingRemoval].pop(0)
+        removalId, _ = min([(i, s) for i, s in enumerate(sortedStrings)],
+                           key=lambda x: itemPriorities[x[1][0]])
+        sortedStrings[removalId].pop(0)
     return ''
 
 
