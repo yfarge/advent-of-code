@@ -55,9 +55,3 @@ print(
 
 print(
     f'Find the item type that corresponds to the badges of each three-Elf group. What is the sum of the priorities of those item types?: {sumBadgePriorites()}')
-
-findOverlap(
-    "vJrwpWtwJgWrhcsFMMfFFhFp",
-    "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-    "PmmdzqPrVvPwwTWBwg",
-)
