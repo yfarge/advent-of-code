@@ -15,7 +15,7 @@ def findOverlap(*args):
     while all([len(s) > 0 for s in sortedStrings]):
         if (all([s[0] == sortedStrings[0][0] for s in sortedStrings])):
             return sortedStrings[0][0]
-        removalId, _ = min([(i, s) for i, s in enumerate(sortedStrings)],
+        removalId, _ = min([(i, s[0]) for i, s in enumerate(sortedStrings)],
                            key=lambda x: itemPriorities[x[1][0]])
         sortedStrings[removalId].pop(0)
     return ''
