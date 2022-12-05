@@ -8,23 +8,23 @@ itemPriorities = {v: i for i, v in enumerate(
     list(string.ascii_letters), start=1)}
 
 
-def findOverlap(compartmentOne, compartmentTwo) -> str:
-    sortedCompartmentOne = "".join(
-        sorted([*compartmentOne], key=lambda x: itemPriorities[x]))
-    sortedCompartmentTwo = "".join(
-        sorted([*compartmentTwo], key=lambda x: itemPriorities[x]))
-    n = len(sortedCompartmentOne)
-    i = j = 0
+def findOverlap(*args):
+    sortedStrings = [sorted([*arg], key=lambda x: itemPriorities[x])
+                     for arg in args]
 
-    while (i + j < n + n - 1):
-        charOne = sortedCompartmentOne[i]
-        charTwo = sortedCompartmentTwo[j]
-        if (charOne == charTwo):
-            return charOne
-        if (i != n - 1 and itemPriorities[charOne] < itemPriorities[charTwo]):
-            i = i + 1 if i + 1 < n else i
-        else:
-            j = j + 1 if j + 1 < n else j
+    lowestPrio = float('inf')
+    pendingRemoval = 0
+    while all([len(s) > 0 for s in sortedStrings]):
+        if (all([s[0] == sortedStrings[0][0] for s in sortedStrings])):
+            return sortedStrings[0][0]
+        for i in range(len(sortedStrings)):
+            prio = itemPriorities[sortedStrings[i][0]]
+            if (prio < lowestPrio):
+                lowestPrio = prio
+                pendingRemoval = i
+        sortedStrings[pendingRemoval].pop(0)
+        pendingRemoval = 0
+        lowestPrio = float('inf')
     return ''
 
 
@@ -39,5 +39,25 @@ def sumOverlap():
     return total
 
 
+def sumBadgePriorites():
+    total = 0
+    for i in range(0, len(rucksacks), 3):
+        r1 = rucksacks[i].strip()
+        r2 = rucksacks[i + 1].strip()
+        r3 = rucksacks[i + 2].strip()
+        total += itemPriorities[findOverlap(r1, r2, r3)]
+    return total
+
+
 print(
     f'Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?: {sumOverlap()}')
+
+
+print(
+    f'Find the item type that corresponds to the badges of each three-Elf group. What is the sum of the priorities of those item types?: {sumBadgePriorites()}')
+
+findOverlap(
+    "vJrwpWtwJgWrhcsFMMfFFhFp",
+    "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+    "PmmdzqPrVvPwwTWBwg",
+)
