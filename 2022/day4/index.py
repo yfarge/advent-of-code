@@ -20,26 +20,17 @@ def isOverlap(a: List[int], b: List[int]):
     return aStart <= bEnd and bStart <= aEnd
 
 
-def countContainedPairs():
+def countPairs(comparator: Callable = lambda a, b: True):
     count = 0
     for pair in pairs:
         intervalOne, intervalTwo = pair
-        if (isContained(intervalOne, intervalTwo)):
-            count += 1
-    return count
-
-
-def countOverlapedPairs():
-    count = 0
-    for pair in pairs:
-        intervalOne, intervalTwo = pair
-        if (isOverlap(intervalOne, intervalTwo)):
+        if (comparator(intervalOne, intervalTwo)):
             count += 1
     return count
 
 
 print(
-    f'In how many assignment pairs does one range fully contain the other?: {countContainedPairs()}')
+    f'In how many assignment pairs does one range fully contain the other?: {countPairs(isContained)}')
 
 print(
-    f'In how many assignment pairs do the ranges overlap?: {countOverlapedPairs()}')
+    f'In how many assignment pairs do the ranges overlap?: {countPairs(isOverlap)}')
