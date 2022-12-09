@@ -2,8 +2,8 @@ from typing import *
 
 
 class Directory:
-    def __init__(self, name: str = "", _size: int = 0, _parent=None, _files: Dict = None, _directories: Dict = None):
-        self.name = name
+    def __init__(self, _name: str = "", _size: int = 0, _parent=None, _files: Dict = None, _directories: Dict = None):
+        self.name = _name
         self.size = _size
         self.parent = _parent
         self.files = _files or {}
