@@ -1,6 +1,6 @@
 from typing import *
 
-with open("2022/day5/input.txt") as file:
+with open("day5/input.txt") as file:
     lines = file.readlines()
     stacks = [[] for _ in range(9)]
     instructions = []

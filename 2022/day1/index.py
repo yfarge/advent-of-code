@@ -1,6 +1,6 @@
 from typing import *
 
-with open("./2022/day1/input.txt") as file:
+with open("day1/input.txt") as file:
     lines = file.readlines()
 
 

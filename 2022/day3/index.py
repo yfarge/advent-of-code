@@ -1,7 +1,7 @@
 from typing import *
 import string
 
-with open("2022/day3/input.txt") as file:
+with open("day3/input.txt") as file:
     rucksacks = file.readlines()
 
 itemPriorities = {v: i for i, v in enumerate(

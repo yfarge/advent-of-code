@@ -1,6 +1,6 @@
 from typing import *
 
-with open("2022/day6/input.txt") as file:
+with open("day6/input.txt") as file:
     datastream = file.read()
     PACKET_MARKER_LENGTH = 4
     MESSAGE_MARKER_LENGTH = 14

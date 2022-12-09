@@ -1,6 +1,6 @@
 from typing import *
 
-with open("2022/day4/input.txt") as file:
+with open("day4/input.txt") as file:
     pairs = [[[int(i) for i in interval.split("-")] for interval in pair.strip().split(',')]
              for pair in file.readlines()]
 

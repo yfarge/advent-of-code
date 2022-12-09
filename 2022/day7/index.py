@@ -27,7 +27,7 @@ class Directory:
             self.size += directory.size
 
 
-with open("2022/day7/input.txt") as file:
+with open("day7/input.txt") as file:
     lineTokens = [line.strip().split() for line in file.readlines()]
 
 
