@@ -15,6 +15,9 @@ class Directory:
     def getChildDirectory(self, name):
         return self.directories[name]
 
+    def getParentDirectory(self):
+        return self.parent
+
     def sumFiles(self):
         for size in self.files.values():
             self.size += size
@@ -36,7 +39,7 @@ def constructFileSystem():
             if (command == "cd"):
                 directory = tokens[2]
                 if (directory == ".."):
-                    curNode = curNode.parent
+                    curNode = curNode.getParentDirectory()
                 else:
                     curNode = curNode.getChildDirectory(directory)
             else:
@@ -81,6 +84,26 @@ def partOne(root: Directory):
     return total
 
 
+def partTwo(root: Directory):
+    minimumRemoved = float('inf')
+    unusedSpace = 70_000_000 - root.size
+    neededSpace = 30_000_000
+
+    def dfs(node: Directory):
+        nonlocal minimumRemoved
+        unusedSpaceAfterRemoval = unusedSpace + node.size
+        if (unusedSpaceAfterRemoval >= neededSpace and node.size <= minimumRemoved):
+            minimumRemoved = node.size
+        for directory in node.directories.values():
+            dfs(directory)
+
+    dfs(root)
+    return minimumRemoved
+
+
 root = constructFileSystem()
 print(
     f'Find all of the directories with a total size of at most 100000. What is the sum of the total sizes of those directories?: {partOne(root)}')
+
+print(
+    f'Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. What is the total size of that directory?: {partTwo(root)}')
