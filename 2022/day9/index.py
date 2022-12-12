@@ -5,7 +5,7 @@ with open("day9/input.txt") as file:
                                               for line in file.readlines()]]
 
 
-def clamp(v: int, min_value: int, max_value: int):
+def clamp(v: int, min_value: int, max_value: int) -> int:
     return max(min(v, max_value), min_value)
 
 
@@ -50,7 +50,7 @@ def simulateRope(knots: List[List[int]]) -> None:
         simulateHeadTailPair(knots[i], knots[i + 1])
 
 
-def calculateTailPositions(numKnots: int):
+def calculateTailPositions(numKnots: int) -> int:
     assert numKnots >= 2, f'Expected numKnots >= 2, received {numKnots}'
     knots = [[0, 0] for _ in range(numKnots)]
     visited_positions = set([(0, 0)])
