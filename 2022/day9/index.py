@@ -1,7 +1,7 @@
 from typing import *
 
 with open("day9/input.txt") as file:
-    instructions = [(a, eval(b)) for a, b in [line.strip().split(' ')
+    instructions = [(a, eval(b)) for a, b in [line.strip().split()
                                               for line in file.readlines()]]
 
 
