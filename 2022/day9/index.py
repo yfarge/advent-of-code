@@ -41,13 +41,13 @@ def interpretInstruction(instruction: Tuple[str, int]) -> Tuple[int, int, int]:
 def simulateHeadTailPair(head: List[int], tail: List[int]) -> None:
     if (isTouching(head, tail)):
         return
-    toward = [clamp(h - t, -1, 1) for h, t in zip(head, tail)]
-    tail[:] = [a + b for a, b in zip(tail, toward)]
+    direction_vector = [clamp(h - t, -1, 1) for h, t in zip(head, tail)]
+    tail[:] = [a + b for a, b in zip(tail, direction_vector)]
 
 
-def simulateRope(positions: List[List[int]]) -> None:
-    for i in range(len(positions) - 1):
-        simulateHeadTailPair(positions[i], positions[i + 1])
+def simulateRope(knots: List[List[int]]) -> None:
+    for i in range(len(knots) - 1):
+        simulateHeadTailPair(knots[i], knots[i + 1])
 
 
 def calculateTailPositions(numKnots: int):
