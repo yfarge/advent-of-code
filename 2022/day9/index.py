@@ -25,10 +25,25 @@ def isTouching(a: Tuple[int], b: Tuple[int]) -> bool:
     return calculateDistance(a, b) <= pow(2, 0.5)
 
 
-def interpretInstruction(instruction: Tuple[str, int]) -> Union[Tuple[int, int, int], ValueError]:
+def lookUpDirectionOffset(direction: str) -> Union[Tuple[int, int], ValueError]:
+    match direction:
+        case "U":
+            return (0, 1)
+        case "L":
+            return (-1, 0)
+        case "D":
+            return (0, -1)
+        case "R":
+            return (1, 0)
+        case _:
+            raise ValueError(
+                f'Direction not recognized, expected U | L | D | R, got {direction}')
+
+
+def interpretInstruction(instruction: Tuple[str, int]) -> Tuple[int, int, int]:
     direction, steps = instruction
-    offset, axis = direction2OffsetAxis[direction]
-    return (steps, offset, axis)
+    offset = lookUpDirectionOffset(direction)
+    return (steps, offset)
 
 
 def simulateHeadTailPair(head: List[int], tail: List[int]) -> None:
@@ -43,32 +58,21 @@ def simulateRope(positions: List[List[int]]) -> None:
         simulateHeadTailPair(positions[i], positions[i + 1])
 
 
-def partOne() -> int:
-    positions = [[0, 0], [0, 0]]
+def calculateTailPositions(numKnots: int):
+    assert numKnots >= 2, f'Expected numKnots >= 2, received {numKnots}'
+    knots = [[0, 0] for _ in range(numKnots)]
     visited_positions = set([(0, 0)])
     for instruction in instructions:
-        steps, offset, axis = interpretInstruction(instruction)
+        steps, offset = interpretInstruction(instruction)
         for _ in range(steps):
-            positions[0][axis] += offset
-            simulateRope(positions)
-            visited_positions.add(tuple(positions[-1]))
-    return len(visited_positions)
-
-
-def partTwo() -> int:
-    positions = [[0, 0] for _ in range(10)]
-    visited_positions = set([(0, 0)])
-    for instruction in instructions:
-        steps, offset, axis = interpretInstruction(instruction)
-        for _ in range(steps):
-            positions[0][axis] += offset
-            simulateRope(positions)
-            visited_positions.add(tuple(positions[-1]))
+            knots[0][:] = [a + b for a, b in zip(knots[0], offset)]
+            simulateRope(knots)
+            visited_positions.add(tuple(knots[-1]))
     return len(visited_positions)
 
 
 print(
-    f'How many positions does the tail of the rope visit at least once?: {partOne()}')
+    f'How many positions does the tail of the rope visit at least once?: {calculateTailPositions(2)}')
 
 print(
-    f'Simulate your complete series of motions on a larger rope with ten knots. How many positions does the tail of the rope visit at least once?: {partTwo()}')
+    f'Simulate your complete series of motions on a larger rope with ten knots. How many positions does the tail of the rope visit at least once?: {calculateTailPositions(10)}')
