@@ -4,14 +4,6 @@ with open("day9/input.txt") as file:
     instructions = [(a, eval(b)) for a, b in [line.strip().split(' ')
                                               for line in file.readlines()]]
 
-X_AXIS, Y_AXIS = 0, 1
-direction2OffsetAxis = {
-    "U": (1, Y_AXIS),
-    "L": (-1, X_AXIS),
-    "D": (-1, Y_AXIS),
-    "R": (1, X_AXIS),
-}
-
 
 def clamp(v: int, min_value: int, max_value: int):
     return max(min(v, max_value), min_value)
