@@ -13,6 +13,10 @@ direction2OffsetAxis = {
 }
 
 
+def clamp(v: int, min_value: int, max_value: int):
+    return max(min(v, max_value), min_value)
+
+
 def calculateDistance(a: Tuple[int], b: Tuple[int]) -> complex:
     return pow(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2), 0.5)
 
@@ -27,34 +31,38 @@ def interpretInstruction(instruction: Tuple[str, int]) -> Union[Tuple[int, int, 
     return (steps, offset, axis)
 
 
-def updatePositions(positions: List[Tuple[int, int]], offset: int, axis: int):
-    new_head = list(positions[0])
-    new_head[axis] += offset
-    if (isTouching(positions[1], new_head)):
-        positions[0] = tuple(new_head)
-    else:
-        positions.insert(0, tuple(new_head))
-        positions.pop()
+def simulateHeadTailPair(head: List[int], tail: List[int]) -> None:
+    if (isTouching(head, tail)):
+        return
+    toward = [clamp(h - t, -1, 1) for h, t in zip(head, tail)]
+    tail[:] = [a + b for a, b in zip(tail, toward)]
+
+
+def simulateRope(positions: List[List[int]]) -> None:
+    for i in range(len(positions) - 1):
+        simulateHeadTailPair(positions[i], positions[i + 1])
 
 
 def partOne() -> int:
-    positions = [(0, 0), (0, 0)]
+    positions = [[0, 0], [0, 0]]
     visited_positions = set([(0, 0)])
     for instruction in instructions:
         steps, offset, axis = interpretInstruction(instruction)
         for _ in range(steps):
-            updatePositions(positions, offset, axis)
+            positions[0][axis] += offset
+            simulateRope(positions)
             visited_positions.add(tuple(positions[-1]))
     return len(visited_positions)
 
 
 def partTwo() -> int:
-    positions = [tuple([0, 0]) for _ in range(10)]
+    positions = [[0, 0] for _ in range(10)]
     visited_positions = set([(0, 0)])
     for instruction in instructions:
         steps, offset, axis = interpretInstruction(instruction)
         for _ in range(steps):
-            updatePositions(positions, offset, axis)
+            positions[0][axis] += offset
+            simulateRope(positions)
             visited_positions.add(tuple(positions[-1]))
     return len(visited_positions)
 
