@@ -1,23 +1,9 @@
 from typing import *
+from functools import reduce
 import re
 
 with open("day11/input.txt") as file:
     lines = [line.strip() for line in file.readlines() if line != "\n"]
-
-# Monkey Class
-    # List of starting items
-    # Operation function that
-    # takes in a worry level
-    # applies an operation and divides the result by three
-    # Test function that
-    # takes in a worry level
-    # checks if it passes the test
-    # True: return index of monkey
-    # False: return index of other monkey
-
-# parent(value):
-    # child(worry):
-    # worry + value
 
 
 class Monkey:
@@ -29,7 +15,7 @@ class Monkey:
         self.divisor = _divisor
 
     def inspectItem(self, item: int):
-        return self.operation(item) // 3
+        return self.operation(item)
 
     def testItem(self, item: int):
         return self.test(item)
@@ -82,12 +68,20 @@ def createTroop():
     return troop
 
 
-def simulateRounds(troop: List[Monkey], rounds: int):
+def simulateRounds(troop: List[Monkey], rounds: int, relief: bool):
+    cycle_length = reduce(lambda a, b: a * b,
+                          [monkey.divisor for monkey in troop])
+
     def simulateRound(troop: List[Monkey]):
         for monkey in troop:
             for item in monkey.items:
                 item = monkey.inspectItem(item)
-                troop[monkey.testItem(item)].items.append(item)
+                if relief:
+                    item = item // 3
+                else:
+                    item = item % cycle_length
+                monkey_index = monkey.testItem(item)
+                troop[monkey_index].items.append(item)
             monkey.inspected += len(monkey.items)
             monkey.items.clear()
 
@@ -96,13 +90,14 @@ def simulateRounds(troop: List[Monkey], rounds: int):
         rounds -= 1
 
 
-def calculateMonkeyBusiness(rounds: int):
+def calculateMonkeyBusiness(rounds: int, relief: bool):
     troop = createTroop()
-    simulateRounds(troop, rounds)
+    simulateRounds(troop, rounds, relief)
     inspected = sorted([monkey.inspected for monkey in troop], reverse=True)
-
     return inspected[0] * inspected[1]
 
 
 print(
-    f'What is the level of monkey business after 20 rounds of stuff-slinging simian shenanigans?: {calculateMonkeyBusiness(20)}')
+    f'What is the level of monkey business after 20 rounds of stuff-slinging simian shenanigans?: {calculateMonkeyBusiness(20, True)}')
+print(
+    f'Starting again from the initial state in your puzzle input, what is the level of monkey business after 10000 rounds?: {calculateMonkeyBusiness(10000, False)}')
