@@ -33,23 +33,28 @@ def createInitialFilledTiles() -> Set[Tuple[int, int]]:
     return filled_tiles
 
 
-def simulateSand() -> int:
+def simulateSand(floor: bool) -> int:
     count = 0
+    position = (500, 0)
     filled_points = createInitialFilledTiles()
     max_height = max(list(filled_points), key=lambda x: x[1])[1]
-    position = (500, 0)
+    floor_height = max_height + 2
     while True:
-        if (position[1] > max_height):
+        valid_height = (position[1] + 1) < floor_height
+        if (position[1] >= max_height and not floor):
             break
         down = addPoints(position, (0, 1))
         left = addPoints(position, (-1, 1))
         right = addPoints(position, (1, 1))
-        if (down not in filled_points):
+        if (down not in filled_points and valid_height):
             position = down
-        elif (left not in filled_points):
+        elif (left not in filled_points and valid_height):
             position = left
-        elif (right not in filled_points):
+        elif (right not in filled_points and valid_height):
             position = right
+        elif (position == (500, 0)):
+            count += 1
+            break
         else:
             filled_points.add(position)
             position = (500, 0)
@@ -58,4 +63,8 @@ def simulateSand() -> int:
 
 
 print(
-    f'Using your scan, simulate the falling sand. How many units of sand come to rest before sand starts flowing into the abyss below?: {simulateSand()}')
+    f'Using your scan, simulate the falling sand. How many units of sand come to rest before sand starts flowing into the abyss below?: {simulateSand(False)}')
+
+print(
+    f'Using your scan, simulate the falling sand until the source of the sand becomes blocked. How many units of sand come to rest?: {simulateSand(True)}'
+)
