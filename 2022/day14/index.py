@@ -1,7 +1,4 @@
 from typing import *
-from sys import setrecursionlimit
-
-setrecursionlimit(2200)
 
 with open("day14/input.txt") as file:
     rock_lines = [list(map(lambda x: tuple(map(lambda v: int(v), x.strip().split(","))), split_line)) for split_lines in [[line.strip().split("->")
@@ -40,24 +37,23 @@ def simulateSand() -> int:
     count = 0
     filled_points = createInitialFilledTiles()
     max_height = max(list(filled_points), key=lambda x: x[1])[1]
-
-    def recur(position: Tuple[int, int]):
-        nonlocal count
+    position = (500, 0)
+    while True:
         if (position[1] > max_height):
-            return
+            break
         down = addPoints(position, (0, 1))
         left = addPoints(position, (-1, 1))
         right = addPoints(position, (1, 1))
         if (down not in filled_points):
-            return recur(down)
+            position = down
         elif (left not in filled_points):
-            return recur(left)
+            position = left
         elif (right not in filled_points):
-            return recur(right)
-        filled_points.add(position)
-        count += 1
-        recur((500, 0))
-    recur((500, 0))
+            position = right
+        else:
+            filled_points.add(position)
+            position = (500, 0)
+            count += 1
     return count
 
 
