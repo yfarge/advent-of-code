@@ -1,15 +1,29 @@
-pub fn main() {
+fn get_value(s: &str) -> u32 {
+    let mut result = String::with_capacity(2);
+
+    for c in s.chars() {
+        if c.is_numeric() {
+            result.push(c);
+            break;
+        }
+    }
+
+    for c in s.chars().rev() {
+        if c.is_numeric() {
+            result.push(c);
+            break;
+        }
+    }
+
+    return result.parse().unwrap();
+}
+
+fn main() {
     println!(
         "{}",
         include_str!("../input.txt")
             .lines()
-            .map(|s| s.replace(|c: char| !c.is_numeric(), ""))
-            .map(
-                |n| format!("{}{}", n.chars().next().unwrap(), n.chars().last().unwrap())
-                    .parse::<u32>()
-                    .unwrap()
-            )
+            .map(|s| get_value(s))
             .sum::<u32>()
     );
 }
-
