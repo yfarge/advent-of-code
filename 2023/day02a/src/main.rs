@@ -1,5 +1,3 @@
-use std::u32;
-
 // red, green, blue
 #[derive(Debug)]
 struct Round(u32, u32, u32);
