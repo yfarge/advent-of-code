@@ -1,4 +1,30 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+
+fn generate_visited(map: &Vec<&[u8]>, start: &(isize, isize)) -> Vec<(isize, isize)> {
+    let mut visited: HashSet<(isize, isize)> = HashSet::new();
+    let mut ord = 0;
+    let mut offset = (0, -1);
+    let (mut x, mut y) = start;
+    while let Some(cell) = map
+        .get((y + offset.1) as usize)
+        .and_then(|row| row.get((x + offset.0) as usize))
+    {
+        if *cell == b'#' {
+            ord = (ord + 1) % 4;
+            match ord {
+                0 => offset = (0, -1),
+                1 => offset = (1, 0),
+                2 => offset = (0, 1),
+                3 => offset = (-1, 0),
+                _ => {}
+            }
+        } else {
+            (x, y) = (x + offset.0, y + offset.1);
+            visited.insert((x, y));
+        }
+    }
+    visited.into_iter().collect()
+}
 
 fn main() {
     let map = include_bytes!("../input.txt")
@@ -6,41 +32,43 @@ fn main() {
         .collect::<Vec<_>>();
 
     let start = (0..map.len() as isize)
-        .flat_map(|y| (0..map[0].len() as isize).map(move |x| (y, x)))
-        .find(|(y, x)| map[*y as usize][*x as usize] == b'^')
+        .flat_map(|y| (0..map[0].len() as isize).map(move |x| (x, y)))
+        .find(|(x, y)| map[*y as usize][*x as usize] == b'^')
         .unwrap();
+
+    let visited = generate_visited(&map, &start);
 
     let mut counter: HashMap<(isize, isize), usize> = HashMap::new();
 
     println!(
         "{:#?}",
-        (0..map.len() as isize)
-            .flat_map(|y| (0..map[0].len() as isize).map(move |x| (y, x)))
+        visited
+            .into_iter()
             .filter(|coord| {
-                let (mut y, mut x) = start;
+                let (mut x, mut y) = start;
                 let mut ord = 0;
-                let mut offset = (-1, 0);
+                let mut offset = (0, -1);
                 counter.clear();
                 while let Some(cell) = map
-                    .get((y + offset.0) as usize)
-                    .and_then(|row| row.get((x + offset.1) as usize))
+                    .get((y + offset.1) as usize)
+                    .and_then(|row| row.get((x + offset.0) as usize))
                 {
-                    *counter.entry((y, x)).or_insert(0) += 1;
-                    if *counter.entry((y, x)).or_default() > 4 {
+                    if *counter.entry((x, y)).or_default() > 4 {
                         return true;
                     }
 
-                    if *cell == b'#' || *coord == (y + offset.0, x + offset.1) {
+                    if *cell == b'#' || *coord == (x + offset.0, y + offset.1) {
                         ord = (ord + 1) % 4;
                         match ord {
-                            0 => offset = (-1, 0),
-                            1 => offset = (0, 1),
-                            2 => offset = (1, 0),
-                            3 => offset = (0, -1),
-                            _ => panic!(),
+                            0 => offset = (0, -1),
+                            1 => offset = (1, 0),
+                            2 => offset = (0, 1),
+                            3 => offset = (-1, 0),
+                            _ => {}
                         }
                     } else {
-                        (y, x) = (y + offset.0, x + offset.1)
+                        (x, y) = (x + offset.0, y + offset.1);
+                        *counter.entry((x, y)).or_insert(0) += 1;
                     }
                 }
                 false
