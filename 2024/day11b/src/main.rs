@@ -1,53 +1,44 @@
-use std::{collections::HashMap, ops::Mul};
+use ahash::AHashMap;
 
 fn split(a: usize) -> (usize, usize) {
     let offset = 10usize.pow((a.ilog10() + 1) / 2);
     let l = a / offset;
-    let r = a - l.mul(offset);
+    let r = a - l * offset;
     (l, r)
 }
 
-fn is_even_digits(a: usize) -> bool {
-    a.ilog10() % 2 != 0
-}
-
-fn blink(v: usize, n: usize) -> usize {
-    let mut memo = HashMap::new();
-
-    fn dfs(v: usize, n: usize, h: &mut HashMap<(usize, usize), usize>) -> usize {
-        if n == 0 {
-            return 0;
-        }
-
-        if h.contains_key(&(v, n)) {
-            return h[&(v, n)];
-        }
-
-        let count;
-        if v == 0 {
-            count = dfs(1, n - 1, h);
-        } else if is_even_digits(v) {
-            let (l, r) = split(v);
-            count = 1 + dfs(l, n - 1, h) + dfs(r, n - 1, h);
-        } else {
-            count = dfs(v.mul(2024), n - 1, h);
-        }
-
-        h.insert((v, n), count);
-        return count;
+fn blink(v: usize, n: usize, h: &mut AHashMap<(usize, usize), usize>) -> usize {
+    if n == 0 {
+        return 0;
     }
 
-    dfs(v, n, &mut memo)
+    if h.contains_key(&(v, n)) {
+        return h[&(v, n)];
+    }
+
+    let count;
+    if v == 0 {
+        count = blink(1, n - 1, h);
+    } else if v.ilog10() % 2 != 0 {
+        let (l, r) = split(v);
+        count = 1 + blink(l, n - 1, h) + blink(r, n - 1, h);
+    } else {
+        count = blink(v * 2024, n - 1, h);
+    }
+
+    h.insert((v, n), count);
+    return count;
 }
 
 fn main() {
+    let mut memo = AHashMap::with_capacity(150000);
+
     println!(
         "{}",
         include_bytes!("../input.txt")
             .split(|&b| b == b' ')
             .filter(|line| !line.is_empty())
-            .map(|b| atoi::atoi::<usize>(b).unwrap())
-            .map(|stone| 1 + blink(stone, 75))
+            .map(|b| 1 + blink(atoi::atoi::<usize>(b).unwrap(), 75, &mut memo))
             .sum::<usize>()
     );
 }
