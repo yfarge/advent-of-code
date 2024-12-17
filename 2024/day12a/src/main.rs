@@ -9,6 +9,8 @@ fn main() {
     let mut queue = VecDeque::with_capacity(5000);
     let mut visited = HashSet::with_capacity(20000);
 
+    let directions = [(-1, 0), (0, -1), (1, 0), (0, 1)];
+
     println!(
         "{:#?}",
         (0..map.len() as isize)
@@ -25,24 +27,16 @@ fn main() {
 
                     area += 1;
 
-                    for (next_col, next_row) in [
-                        (col - 1, row),
-                        (col, row - 1),
-                        (col + 1, row),
-                        (col, row + 1),
-                    ] {
-                        if 0 <= next_col
-                            && 0 <= next_row
-                            && (next_col as usize) < map[0].len()
-                            && (next_row as usize) < map.len()
-                            && map[next_row as usize][next_col as usize]
-                                == map[row as usize][col as usize]
+                    for &(dx, dy) in directions.iter() {
+                        let (next_col, next_row) = (col + dx, row + dy);
+                        if map
+                            .get(next_row as usize)
+                            .and_then(|row| row.get(next_col as usize))
+                            .map_or(true, |&plot| plot != map[row as usize][col as usize])
                         {
-                            if !visited.contains(&(next_col, next_row)) {
-                                queue.push_back((next_col, next_row));
-                            }
-                        } else {
                             perimeter += 1;
+                        } else if !visited.contains(&(next_col, next_row)) {
+                            queue.push_back((next_col, next_row));
                         }
                     }
                 }
