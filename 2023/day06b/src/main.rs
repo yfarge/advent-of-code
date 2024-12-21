@@ -1,4 +1,4 @@
-use std::ops::Div;
+use std::ops::{Div, Mul};
 
 fn calculate_possible_wins(time: f64, record: f64) -> usize {
     let b = time.div(2f64).powi(2);
@@ -9,24 +9,21 @@ fn calculate_possible_wins(time: f64, record: f64) -> usize {
 }
 
 fn main() {
-    let td = include_str!("../input.txt")
-        .lines()
-        .filter_map(|line| line.split(":").last())
-        .map(|nums| {
-            nums.chars()
-                .filter(|c| !c.is_whitespace())
-                .collect::<String>()
-                .split_whitespace()
-                .filter_map(|num| num.parse::<f64>().ok())
-                .collect::<Vec<_>>()
+    let td = include_bytes!("../input.txt")
+        .split(|&b| b == b'\n')
+        .map(|line| {
+            line.split(|&b| b == b':')
+                .last()
+                .unwrap()
+                .split(|&b| b.is_ascii_whitespace())
+                .fold(0usize, |mut acc, num| {
+                    if let Some(num) = atoi::atoi::<usize>(num) {
+                        acc = acc.mul(10usize.pow(num.ilog10() + 1)) + num
+                    }
+                    acc
+                })
         })
         .collect::<Vec<_>>();
 
-    println!(
-        "{:#?}",
-        (0..td[0].len())
-            .map(|race| calculate_possible_wins(td[0][race], td[1][race]))
-            .product::<usize>()
-    )
+    println!("{:#?}", calculate_possible_wins(td[0] as f64, td[1] as f64))
 }
-
